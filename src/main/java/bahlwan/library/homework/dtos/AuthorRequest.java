@@ -5,7 +5,7 @@ import java.util.List;
 public class AuthorRequest {
     private String name;
     private String birthDate;
-    private List<Long> books;
+    private List<String> books;
 
     public String getName() {
         return name;
@@ -23,11 +23,11 @@ public class AuthorRequest {
         this.birthDate = birthDate;
     }
 
-    public List<Long> getBooks() {
+    public List<String> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Long> books) {
+    public void setBooks(List<String> books) {
         this.books = books;
     }
 }

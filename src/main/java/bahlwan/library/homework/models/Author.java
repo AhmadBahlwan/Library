@@ -3,34 +3,31 @@ package bahlwan.library.homework.models;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
+@Table(name = "authors")
 public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @NotNull
-    @Column(name = "name")
+    @Column(name = "name",length = 1000)
     private String name;
 
     @Column(name = "birth_date")
-    private LocalDate birthDate;
+    private String birthDate;
 
-
-    @ManyToMany(mappedBy = "authors")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "authors")
     Set<Book>books;
 
     public Author(){
 
     }
 
-    public Author(Long id, String name, LocalDate birthDate, Set<Book> books) {
+    public Author(String id, String name, String birthDate, Set<Book> books) {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
@@ -38,11 +35,11 @@ public class Author {
     }
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -54,11 +51,11 @@ public class Author {
         this.name = name;
     }
 
-    public LocalDate getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 

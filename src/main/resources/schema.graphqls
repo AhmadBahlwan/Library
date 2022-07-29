@@ -1,0 +1,54 @@
+schema {
+    query: Query
+}
+
+type Query {
+    allBooks: [Book]
+    bookById(id: ID): Book
+    booksWithFilter(filter: BookFilter): [Book]
+    allAuthors(page:Int, size:Int): [Author]
+    author(id: ID): Author
+    authorsWithFilter(filter: AuthorFilter, pagination:PaginationFilter): [Author]
+}
+
+type Book {
+    id: ID!
+    title: String
+    description: String
+    publishDate: String
+    authors: [Author]
+}
+
+type Author {
+    id: ID!
+    name: String
+    birthDate: String
+    books: [Book]
+}
+
+input BookFilter {
+    title: FilterField
+    description: FilterField
+    publishDate: FilterField
+
+}
+
+input AuthorFilter {
+    name: FilterField
+    birthDate: FilterField
+}
+
+input FilterField {
+    operator: String!
+    value: String!
+}
+
+input PaginationFilter {
+    page: Int
+    size: Int
+}
+
+type Mutation {
+    createBook(title: String!, description: String, publish_date: String, authors:[ID]): Book!
+    createAuthor(name: String!, birth_date: String, books:[ID]): Author!
+}

@@ -1,25 +1,25 @@
 package bahlwan.library.homework.models;
 
-import com.sun.istack.NotNull;
+
+
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name ="books")
+@Table(name = "books")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @NotNull
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1024)
     private String description;
 
     @NotNull
@@ -27,7 +27,7 @@ public class Book {
     private LocalDate publishDate;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "book_author",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -38,7 +38,7 @@ public class Book {
 
     }
 
-    public Book(Long id, String title, String description, LocalDate publishDate, Set<Author> authors) {
+    public Book(String id, String title, String description, LocalDate publishDate, Set<Author> authors) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -46,11 +46,11 @@ public class Book {
         this.authors = authors;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
