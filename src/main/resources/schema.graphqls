@@ -3,12 +3,12 @@ schema {
 }
 
 type Query {
-    allBooks: [Book]
-    bookById(id: ID): Book
-    booksWithFilter(filter: BookFilter): [Book]
-    allAuthors(page:Int, size:Int): [Author]
+    allBooks(pagination: PaginationFilter): [Book]
+    book(id: ID): Book
+    booksWithFilter(filter: BookFilter, pagination: PaginationFilter): [Book]
+    allAuthors(pagination: PaginationFilter): [Author]
     author(id: ID): Author
-    authorsWithFilter(filter: AuthorFilter, pagination:PaginationFilter): [Author]
+    authorsWithFilter(filter: AuthorFilter, pagination: PaginationFilter): [Author]
 }
 
 type Book {
@@ -49,6 +49,6 @@ input PaginationFilter {
 }
 
 type Mutation {
-    createBook(title: String!, description: String, publish_date: String, authors:[ID]): Book!
-    createAuthor(name: String!, birth_date: String, books:[ID]): Author!
+    createBook(id: String!, title: String!, description: String, publish_date: String, authors:[ID]): Book!
+    createAuthor(id: String, name: String!, birth_date: String, books:[ID]): Author!
 }

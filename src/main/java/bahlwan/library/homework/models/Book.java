@@ -16,10 +16,10 @@ public class Book {
     private String id;
 
     @NotNull
-    @Column(name = "title")
+    @Column(name = "title", length = 800)
     private String title;
 
-    @Column(name = "description", length = 1024)
+    @Column(name = "description", length = 3000)
     private String description;
 
     @NotNull

@@ -20,8 +20,9 @@ public class BookMutation implements GraphQLMutationResolver {
     @Autowired
     private AuthorRepository authorRepository;
 
-    public Book createBook(String title, String description, String publishDate, List<String>authorsId){
+    public Book createBook(String id, String title, String description, String publishDate, List<String>authorsId){
         Book book = new Book();
+        book.setId(id);
         book.setTitle(title);
         book.setDescription(description);
         book.setPublishDate(LocalDate.parse(publishDate));

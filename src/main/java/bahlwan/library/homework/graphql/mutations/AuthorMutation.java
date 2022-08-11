@@ -19,8 +19,9 @@ public class AuthorMutation implements GraphQLMutationResolver {
     @Autowired
     private AuthorRepository authorRepository;
 
-    public Author createAuthor(String name, String birthDate, List<String> booksId){
+    public Author createAuthor(String id, String name, String birthDate, List<String> booksId){
         Author author = new Author();
+        author.setId(id);
         author.setName(name);
         author.setBirthDate(birthDate);
         author.setBooks(bookRepository.findAllById(booksId).stream().collect(Collectors.toSet()));

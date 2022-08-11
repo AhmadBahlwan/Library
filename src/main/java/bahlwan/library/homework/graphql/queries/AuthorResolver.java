@@ -8,12 +8,12 @@ import bahlwan.library.homework.models.Author;
 import bahlwan.library.homework.models.Book;
 import bahlwan.library.homework.repositories.AuthorRepository;
 import bahlwan.library.homework.repositories.BookRepository;
+import bahlwan.library.homework.utils.PaginationUtility;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -35,15 +35,16 @@ public class AuthorResolver implements GraphQLQueryResolver {
 
 
 
-    public Iterable<Author> allAuthors(DataFetchingEnvironment environment, PaginationFilter pagination) {
+    public Iterable<Author> allAuthors(PaginationFilter pagination, DataFetchingEnvironment environment) {
         DataFetchingFieldSelectionSet s = environment.getSelectionSet();
+        Pageable pageable = PaginationUtility.getPerfectPageable(pagination);
         if (s.contains(BOOKS))
-            return authorRepository.findAll(fetchBooks(),PageRequest.of(pagination.getPage(),pagination.getSize()));
+            return authorRepository.findAll(fetchBooks(),pageable);
         else
-            return authorRepository.findAll(PageRequest.of(pagination.getPage(), pagination.getSize()));
+            return authorRepository.findAll(pageable);
     }
 
-    public Author author(Long id, DataFetchingEnvironment environment) {
+    public Author author(String id, DataFetchingEnvironment environment) {
         Specification<Author> spec = byId(id);
         DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
         if (selectionSet.contains(BOOKS))
@@ -59,13 +60,13 @@ public class AuthorResolver implements GraphQLQueryResolver {
         };
     }
 
-    private Specification<Author> byId(Long id) {
+    private Specification<Author> byId(String id) {
         return  (root, query, builder) -> builder.equal(root.get("id"), id);
     }
 
     public Page<Author> authorsWithFilter(AuthorFilter filter, PaginationFilter pagination) {
         Specification<Author> spec = null;
-        Pageable pageable = pagination == null ? PageRequest.of(0,100) : PageRequest.of(pagination.getPage(),pagination.getSize()) ;
+        Pageable pageable = PaginationUtility.getPerfectPageable(pagination);
         try{
             if (filter.getName() != null)
                 spec = byName(filter.getName());

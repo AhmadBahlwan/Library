@@ -3,15 +3,18 @@ package bahlwan.library.homework.graphql.queries;
 
 import bahlwan.library.homework.graphql.BookFilter;
 import bahlwan.library.homework.graphql.FilterField;
+import bahlwan.library.homework.graphql.PaginationFilter;
 import bahlwan.library.homework.models.Author;
 import bahlwan.library.homework.models.Book;
 import bahlwan.library.homework.repositories.BookRepository;
-import bahlwan.library.homework.services.BookService;
 
+import bahlwan.library.homework.utils.PaginationUtility;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -25,26 +28,20 @@ public class BookResolver implements GraphQLQueryResolver {
 
     public static final String AUTHORS = "authors";
 
-    @Autowired
-    private BookService bookService;
 
     @Autowired
     private BookRepository bookRepository;
 
-
-    public Book book(String id) {
-        return bookService.getBookById(id);
-    }
-
-    public Iterable<Book> allBooks(DataFetchingEnvironment environment) {
+    public Iterable<Book> allBooks(PaginationFilter pagination, DataFetchingEnvironment environment) {
         DataFetchingFieldSelectionSet s = environment.getSelectionSet();
+        Pageable pageable = PaginationUtility.getPerfectPageable(pagination);
         if (s.contains(AUTHORS))
-            return bookRepository.findAll(fetchAuthors());
+            return bookRepository.findAll(fetchAuthors(), pageable);
         else
-            return bookRepository.findAll();
+            return bookRepository.findAll(pageable);
     }
 
-    public Book bookById(Long id, DataFetchingEnvironment environment) {
+    public Book book(String id, DataFetchingEnvironment environment) {
         Specification<Book> spec = byId(id);
         DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
         if (selectionSet.contains(AUTHORS))
@@ -60,14 +57,15 @@ public class BookResolver implements GraphQLQueryResolver {
         };
     }
 
-    private Specification<Book> byId(Long id) {
+    private Specification<Book> byId(String id) {
         return (root, query, builder) -> builder.equal(root.get("id"), id);
     }
 
 
-    public Iterable<Book> booksWithFilter(BookFilter filter) {
+    public Iterable<Book> booksWithFilter(BookFilter filter, PaginationFilter paginationFilter) {
         Specification<Book> spec = null;
-        try{
+        Pageable pageable = PaginationUtility.getPerfectPageable(paginationFilter);
+        try {
             if (filter.getTitle() != null)
                 spec = byTitle(filter.getTitle());
             if (filter.getDescription() != null)
@@ -76,11 +74,11 @@ public class BookResolver implements GraphQLQueryResolver {
                 spec = (spec == null ? byPublishDate(filter.getPublishDate()) :
                         spec.and(byPublishDate(filter.getPublishDate())));
             if (spec != null)
-                return bookRepository.findAll(spec);
+                return bookRepository.findAll(spec, pageable);
             else
-                return bookRepository.findAll();
-        }catch(NullPointerException e){
-            return bookRepository.findAll();
+                return bookRepository.findAll(pageable);
+        } catch (NullPointerException e) {
+            return bookRepository.findAll(pageable);
         }
 
     }

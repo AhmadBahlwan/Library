@@ -1,5 +1,7 @@
 package bahlwan.library.homework.graphql;
 
+import java.awt.print.Pageable;
+
 public class PaginationFilter {
 
     private int page;
