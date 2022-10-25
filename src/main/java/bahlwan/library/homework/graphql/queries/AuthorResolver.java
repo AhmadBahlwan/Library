@@ -72,12 +72,9 @@ public class AuthorResolver implements GraphQLQueryResolver {
                 spec = byName(filter.getName());
             if (filter.getBirthDate() != null)
                 spec = (spec == null ? byBirthDate(filter.getBirthDate()) : spec.and(byBirthDate(filter.getBirthDate())));
-            if (spec != null)
-                return authorRepository.findAll(spec,pageable);
-            else
-                return authorRepository.findAll(pageable);
+            return authorRepository.findAll(spec,pageable);
         }catch(NullPointerException e){
-            return authorRepository.findAll(pageable);
+            return authorRepository.findAll(spec,pageable);
         }
     }
 

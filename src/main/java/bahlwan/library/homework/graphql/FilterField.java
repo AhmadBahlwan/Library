@@ -40,17 +40,15 @@ public class FilterField {
                 case "le": return builder.le(field, v);
                 case "gt": return builder.gt(field, v);
                 case "ge": return builder.ge(field, v);
-                case "eq": return builder.equal(field, v);
+                case "eq": return builder.equal(field, value);
             }
         } catch (NumberFormatException e) {
             switch (operator) {
                 case "endsWith": return builder.like(field, "%" + value);
                 case "startsWith": return builder.like(field, value + "%");
                 case "contains": return builder.like(field, "%" + value + "%");
-                case "eq": return builder.equal(field, value);
             }
         }
-
-        return null;
+        return builder.equal(field, value);
     }
 }
